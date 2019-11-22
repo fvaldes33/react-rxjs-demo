@@ -51,21 +51,6 @@ const App: React.FC = () => {
   //   })
   // };
 
-  const addToCart = (product: Product) => {
-    cartSubject.patch({
-      items: [...cart.items, ...[product] ]
-    })
-  };
-
-  const removeFromCart = (product: Product) => {
-    const index = cart.items.findIndex(item => item.id === product.id);
-    cart.items.splice(index, 1);
-
-    cartSubject.patch({
-      items: [...cart.items]
-    })
-  };
-
   const inCart = (product: Product): boolean => {
     const exist = cart.items.find(item => item.id === product.id);
     return exist ? true : false;
@@ -86,9 +71,9 @@ const App: React.FC = () => {
                     <p className="text-4xl font-bold mb-2">${item.price}</p>
                     {inCart(item)
                     ?
-                      <button onClick={() => removeFromCart(item)} className="text-white bg-teal-600 rounded px-4 py-2">Remove from cart</button>
+                      <button onClick={() => cartSubject.removeFromCart(item)} className="text-white bg-teal-600 rounded px-4 py-2">Remove from cart</button>
                     :
-                      <button onClick={() => addToCart(item)} className="text-white bg-teal-600 rounded px-4 py-2">Add to cart</button>
+                      <button onClick={() => cartSubject.addToCart(item)} className="text-white bg-teal-600 rounded px-4 py-2">Add to cart</button>
                     }
                   </div>
                 </div>
