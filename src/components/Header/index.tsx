@@ -12,8 +12,6 @@ const Header: React.FC = () => {
     () => {
       const sub = combineLatest(cartSubject.state$, userSubject.state$)
         .subscribe(([cart, user]) => {
-          console.log(cart, user);
-
           // so something with both items u need
           if (cart) {
             setCount(cart.items.length);
