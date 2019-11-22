@@ -7,10 +7,14 @@ const Header: React.FC = () => {
 
   useEffect(
     () => {
-      cartSubject.state$.subscribe(state => {
+      const sub = cartSubject.state$.subscribe(state => {
         setCount(state.items.length);
         setTotal(cartSubject.total);
       });
+
+      return () => {
+        sub.unsubscribe();
+      }
     },
     []
   );
