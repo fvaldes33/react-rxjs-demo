@@ -12,10 +12,17 @@ const Header: React.FC = () => {
     () => {
       const sub = combineLatest(cartSubject.state$, userSubject.state$)
         .subscribe(([cart, user]) => {
+          console.log(cart, user);
+
           // so something with both items u need
-          setCount(cart.items.length);
-          setTotal(cartSubject.total);
-          setUser(user.users.shift());
+          if (cart) {
+            setCount(cart.items.length);
+            setTotal(cartSubject.total);
+          }
+
+          if (user) {
+            setUser(user.users[0]);
+          }
         });
 
       return () => {
