@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import cartSubject from '../../subjects/CartSubject';
+import userSubject from '../../subjects/UserSubject';
+import { combineLatest } from 'rxjs';
 
 const Header: React.FC = () => {
   const [count, setCount] = useState(0);
   const [total, setTotal] = useState(0);
+  const [user, setUser] = useState();
 
   useEffect(
     () => {
-      const sub = cartSubject.state$.subscribe(state => {
-        setCount(state.items.length);
-        setTotal(cartSubject.total);
-      });
+      const sub = combineLatest(cartSubject.state$, userSubject.state$)
+        .subscribe(([cart, user]) => {
+          // so something with both items u need
+          setCount(cart.items.length);
+          setTotal(cartSubject.total);
+          setUser(user.users.shift());
+        });
 
       return () => {
         sub.unsubscribe();
@@ -29,6 +35,11 @@ const Header: React.FC = () => {
         <div className="lg:flex lg:items-center lg:w-auto text-white">
           <span>Items: {count} | Total: ${total}</span>
         </div>
+        {user &&
+          <div className="lg:flex lg:items-center lg:w-auto text-white">
+            <span>User: {user.name}</span>
+          </div>
+        }
       </nav>
     </header>
   )

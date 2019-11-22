@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from './components/Header';
 import { CartState, Product } from './interfaces';
-// import userSubject from './subjects/UserSubject';
+import userSubject from './subjects/UserSubject';
 import cartSubject from './subjects/CartSubject';
 import { items } from './mock';
 
@@ -35,21 +35,21 @@ const App: React.FC = () => {
     []
   );
 
-  // const getMockUsers = async () => {
-  //   const response = await fetch('https://randomuser.me/api/');
-  //   const data = await response.json();
-  //   const newUsers = data.results.map((item: any, index: number) => {
-  //     return {
-  //       id: index + 1,
-  //       name: `${item.name.first} ${item.name.last}`,
-  //       email: item.email,
-  //       avatar: item.picture.small
-  //     }
-  //   });
-  //   userSubject.patch({
-  //     users: [...newUsers, ...users ]
-  //   })
-  // };
+  const getMockUsers = async () => {
+    const response = await fetch('https://randomuser.me/api/');
+    const data = await response.json();
+    const users = data.results.map((item: any, index: number) => {
+      return {
+        id: index + 1,
+        name: `${item.name.first} ${item.name.last}`,
+        email: item.email,
+        avatar: item.picture.small
+      }
+    });
+    userSubject.patch({
+      users
+    })
+  };
 
   const inCart = (product: Product): boolean => {
     const exist = cart.items.find(item => item.id === product.id);
@@ -60,6 +60,7 @@ const App: React.FC = () => {
     <div className="App">
       <Header />
       <div className="container mx-auto p-6">
+        <button onClick={() => getMockUsers()} className="text-white bg-teal-600 rounded px-4 py-2">Login</button>
         <div className="flex flex-wrap">
           {items.map((item: Product, index: number) => {
             return (
