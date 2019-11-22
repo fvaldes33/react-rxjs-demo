@@ -1,55 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import Header from './components/Header';
-import { CartState, Product } from './interfaces';
+import { CartState, Product, User } from './interfaces';
 import userSubject from './subjects/UserSubject';
 import cartSubject from './subjects/CartSubject';
 import { items } from './mock';
+import { combineLatest } from 'rxjs';
 
 const App: React.FC = () => {
 
-  // const [users, setUsers] = useState<User[]>([]);
+  const [user, setUser] = useState<User|null>();
   const [cart, setCart] = useState<CartState>({
     items: [],
     total: 0.00
   });
 
-  // useEffect(
-  //   () => {
-  //     const sub = userSubject.state$.subscribe(state => setUsers(state.users));
-
-  //     return () => {
-  //       sub.unsubscribe();
-  //     }
-  //   },
-  //   []
-  // );
-
   useEffect(
     () => {
-      const sub = cartSubject.state$.subscribe(state => setCart(state));
+      const sub = combineLatest(userSubject.state$, cartSubject.state$)
+        .subscribe(([userState, cartState]) => {
+          setUser(userState.user);
+          setCart(cartState)
+        });
 
       return () => {
         sub.unsubscribe();
       }
     },
-    []
-  );
-
-  const getMockUsers = async () => {
-    const response = await fetch('https://randomuser.me/api/');
-    const data = await response.json();
-    const users = data.results.map((item: any, index: number) => {
-      return {
-        id: index + 1,
-        name: `${item.name.first} ${item.name.last}`,
-        email: item.email,
-        avatar: item.picture.small
-      }
-    });
-    userSubject.patch({
-      users
-    })
-  };
+    [setUser, setCart]
+  )
 
   const inCart = (product: Product): boolean => {
     const exist = cart.items.find(item => item.id === product.id);
@@ -60,7 +38,13 @@ const App: React.FC = () => {
     <div className="App">
       <Header />
       <div className="container mx-auto p-6">
-        <button onClick={() => getMockUsers()} className="text-white bg-teal-600 rounded px-4 py-2">Login</button>
+        {!user
+          ?
+          <button onClick={() => userSubject.login()} className="text-white bg-teal-600 rounded px-4 py-2">Login</button>
+          :
+          <button onClick={() => userSubject.logout()} className="text-white bg-teal-600 rounded px-4 py-2">Logout</button>
+        }
+
         <div className="flex flex-wrap">
           {items.map((item: Product, index: number) => {
             return (

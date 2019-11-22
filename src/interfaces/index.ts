@@ -19,5 +19,5 @@ export interface CartState {
 
 export interface UserState {
   loading: boolean;
-  users: User[]
+  user: User|null
 }
