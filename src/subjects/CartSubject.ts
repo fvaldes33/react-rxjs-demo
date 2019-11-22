@@ -2,11 +2,14 @@ import { BaseSubject } from './BaseSubject';
 import { CartState, Product } from '../interfaces';
 
 export class CartSubject extends BaseSubject<CartState> {
+  protected store: string = 'cart-state';
+
   constructor() {
     super({
       items: [],
       total: 0.00
     })
+    this.loadFromStorage();
   }
 
   get total() {

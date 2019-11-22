@@ -2,11 +2,14 @@ import { BaseSubject } from './BaseSubject';
 import { UserState } from '../interfaces';
 
 export class UserSubject extends BaseSubject<UserState> {
+  protected store: string = 'user-state';
+
   constructor() {
     super({
       loading: true,
       user: null,
-    })
+    });
+    this.loadFromStorage();
   }
 
   async login() {
